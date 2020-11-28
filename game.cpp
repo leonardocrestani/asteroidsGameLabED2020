@@ -31,11 +31,11 @@ int main()
 
     
     bool writeNickname = true;
-    bool gameOver = true;
+    bool gameOver = false;
     int score = 0;
-    float playerPosX = 487, playerPosY = 281;
+    float playerPosX = 260, playerPosY = 410;
     // Game loop (funcionamento)
-    while (window.isOpen())
+    while (window.isOpen()) 
     {
         // Tratamento de eventos
         sf::Event event;
@@ -56,17 +56,11 @@ int main()
         
         // gameplay
         if(!gameOver) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                playerPosX += 3;
-            }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                playerPosX -= 3;
+                playerPosX -= 12;
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                playerPosY -= 3;
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                playerPosY += 3;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+                playerPosX += 12;
             }
             playerSprite.setPosition(playerPosX, playerPosY);
         }
@@ -75,15 +69,19 @@ int main()
         // Desenha os frames
         window.clear();
         window.draw(backgroundSprite);
+
         // Digitar o nickname
-        if(writeNickname) {
+
+        /* if(writeNickname) {
             window.draw(nameSprite);
             // quando escrever o nickname atualizar para true
-        }
+        } */
+
         // Mostrar menu
-        if(gameOver && !writeNickname) {
+        /*if(gameOver && !writeNickname) {
             window.draw(menuSprite);
-        }
+        }*/
+
         // Comecar jogo
         if(!gameOver) {
             window.draw(playerSprite);
