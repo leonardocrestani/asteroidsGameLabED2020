@@ -2,38 +2,34 @@
 
 int main()
 {
-    const int windowWidth = 1000, windowHeight = 600;
+    const int windowWidth = 600, windowHeight = 900;
 
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Asteroids Remastered 2020");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tux Jump");
     window.setFramerateLimit(60);
 
     // Load textures
 
     sf::Texture backgroundTexture;
-    backgroundTexture.loadFromFile("./assets/backgroundImage.png");
+    backgroundTexture.loadFromFile("./assets/backgroundGame.png");
     sf::Sprite backgroundSprite(backgroundTexture);
 
-    sf::Texture nicknameScreenTexture;
-    nicknameScreenTexture.loadFromFile("./assets/nicknameScreen.png");
-    sf::Sprite nicknameSprite(nicknameScreenTexture);
+    sf::Texture nameScreenTexture;
+    nameScreenTexture.loadFromFile("./assets/nameScreen.png");
+    sf::Sprite nameSprite(nameScreenTexture);
 
     sf::Texture menuTexture;
-    menuTexture.loadFromFile("./assets/menuImage.png");
+    menuTexture.loadFromFile("./assets/menuGame.png");
     sf::Sprite menuSprite(menuTexture);
 
-    sf::Texture spaceShipPlayerTexture;
-    spaceShipPlayerTexture.loadFromFile("./assets/spaceShipPlayer.png");
-    sf::Sprite playerSprite(spaceShipPlayerTexture);
+    sf::Texture plataformaTexture;
+    plataformaTexture.loadFromFile("./assets/plataforaGame.png");
+    sf::Sprite plataformaSprite(plataformaTexture);
 
-    sf::Texture bigAsteroidTexture;
-    bigAsteroidTexture.loadFromFile("./assets/bigAsteroid.png");
-    sf::Sprite bigAsteroidSprite(bigAsteroidTexture);
+    sf::Texture tuxTexture;
+    tuxTexture.loadFromFile("./assets/tuxGame.png");
+    sf::Sprite playerSprite(tuxTexture);
 
-    sf::Texture smallAsteroidTexture;
-    smallAsteroidTexture.loadFromFile("./assets/smallAsteroid.png");
-    sf::Sprite smallAsteroidSprite(smallAsteroidTexture);
-
-
+    
     bool writeNickname = true;
     bool gameOver = true;
     int score = 0;
@@ -81,7 +77,7 @@ int main()
         window.draw(backgroundSprite);
         // Digitar o nickname
         if(writeNickname) {
-            window.draw(nicknameSprite);
+            window.draw(nameSprite);
             // quando escrever o nickname atualizar para true
         }
         // Mostrar menu
