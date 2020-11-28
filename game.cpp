@@ -22,7 +22,7 @@ int main()
     sf::Sprite menuSprite(menuTexture);
 
     sf::Texture plataformaTexture;
-    plataformaTexture.loadFromFile("./assets/plataforaGame.png");
+    plataformaTexture.loadFromFile("./assets/plataformaGame.png");
     sf::Sprite plataformaSprite(plataformaTexture);
 
     sf::Texture tuxTexture;
