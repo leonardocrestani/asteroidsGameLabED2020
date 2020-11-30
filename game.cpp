@@ -25,9 +25,9 @@ int main()
     gameOverTexture.loadFromFile("./assets/gameoverScreen.png");
     sf::Sprite gameOverSprite(gameOverTexture);
 
-    sf::Texture plataformaTexture;
-    plataformaTexture.loadFromFile("./assets/plataformaGame.png");
-    sf::Sprite plataformaSprite(plataformaTexture);
+    sf::Texture platformTexture;
+    platformTexture.loadFromFile("./assets/plataformaGame.png");
+    sf::Sprite platformSprite(platformTexture);
 
     sf::Texture tuxTexture;
     tuxTexture.loadFromFile("./assets/tuxGame.png");
@@ -41,16 +41,17 @@ int main()
     textScore.setCharacterSize(42);
     textScore.setOutlineColor(sf::Color::Black);
     textScore.setFillColor(sf::Color::White);
-
     
     bool writeNickname = true;
     bool gameOver = false;
     int score = 0;
+    int height = 150;
+    float dy = 0;
     /* variaves para serem criadas
         nickname
         data e hora do jogo
     */
-    float playerPosX = 260, playerPosY = 410;
+    float playerPosX = 250, playerPosY = 150;
 
     // Game loop (funcionamento)
     while (window.isOpen()) 
@@ -81,6 +82,12 @@ int main()
                 playerPosX += 6;
             }
             
+             // jogador fora do alcance X muda de lado
+            if (playerPosX > 500)
+			    playerPosX = 0;
+		    if (playerPosX < -40)
+			    playerPosX = window.getSize().x - tuxTexture.getSize().x;
+            
             playerSprite.setPosition(playerPosX, playerPosY);
             textScore.setPosition(20, 20);
             textScore.setString(std::to_string(score));
@@ -91,8 +98,7 @@ int main()
             }
 
         }
-        
-        
+           
         // Desenha os frames
         window.clear();
         window.draw(backgroundSprite);
