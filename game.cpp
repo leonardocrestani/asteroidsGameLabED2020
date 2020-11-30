@@ -21,6 +21,10 @@ int main()
     menuTexture.loadFromFile("./assets/menuGame.png");
     sf::Sprite menuSprite(menuTexture);
 
+    sf::Texture gameOverTexture;
+    gameOverTexture.loadFromFile("./assets/gameoverScreen.png");
+    sf::Sprite gameOverSprite(gameOverTexture);
+
     sf::Texture plataformaTexture;
     plataformaTexture.loadFromFile("./assets/plataformaGame.png");
     sf::Sprite plataformaSprite(plataformaTexture);
@@ -29,11 +33,25 @@ int main()
     tuxTexture.loadFromFile("./assets/tuxGame.png");
     sf::Sprite playerSprite(tuxTexture);
 
+    sf::Font font;
+    font.loadFromFile("assets/small_font.ttf");
+
+    sf::Text textScore;
+    textScore.setFont(font);
+    textScore.setCharacterSize(42);
+    textScore.setOutlineColor(sf::Color::Black);
+    textScore.setFillColor(sf::Color::White);
+
     
     bool writeNickname = true;
     bool gameOver = false;
     int score = 0;
+    /* variaves para serem criadas
+        nickname
+        data e hora do jogo
+    */
     float playerPosX = 260, playerPosY = 410;
+
     // Game loop (funcionamento)
     while (window.isOpen()) 
     {
@@ -57,12 +75,21 @@ int main()
         // gameplay
         if(!gameOver) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                playerPosX -= 12;
+                playerPosX -= 6;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                playerPosX += 12;
+                playerPosX += 6;
             }
+            
             playerSprite.setPosition(playerPosX, playerPosY);
+            textScore.setPosition(20, 20);
+            textScore.setString(std::to_string(score));
+
+            // Se o jogador cair até o final da tela será game over
+            if(playerPosY > 820) {
+                gameOver = true;
+            }
+
         }
         
         
@@ -85,6 +112,10 @@ int main()
         // Comecar jogo
         if(!gameOver) {
             window.draw(playerSprite);
+            window.draw(textScore);
+        }
+        if(gameOver) {
+            window.draw(gameOverSprite);
         }
         window.display();
     }
