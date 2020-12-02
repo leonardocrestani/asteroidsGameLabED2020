@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <random>
 
 int main()
 {
@@ -42,6 +43,18 @@ int main()
     textScore.setOutlineColor(sf::Color::Black);
     textScore.setFillColor(sf::Color::White);
     
+    sf::Vector2u platformPosition[10];
+	std::uniform_int_distribution<unsigned> x(0, 600 - platformTexture.getSize().x);
+	std::uniform_int_distribution<unsigned> y(100, 900);
+	std::default_random_engine e(time(0));
+	
+    // Iniciando plataformas
+    for(size_t i = 0; i < 10; i++)
+	{
+		platformPosition[i].y = y(e);
+        platformPosition[i].x = x(e);
+	}
+
     bool writeNickname = true;
     bool gameOver = false;
     int score = 0;
@@ -68,6 +81,11 @@ int main()
                     window.close();
                 }
             }
+        // jogador fora do alcance X muda de lado
+        if (playerPosX > 600)
+			playerPosX = 0;
+		if (playerPosX < -40)
+			playerPosX = window.getSize().x - tuxTexture.getSize().x;
         }
 
         // Atualizacao dos estados do jogo (elementos)
@@ -82,12 +100,6 @@ int main()
                 playerPosX += 6;
             }
             
-             // jogador fora do alcance X muda de lado
-            if (playerPosX > 500)
-			    playerPosX = 0;
-		    if (playerPosX < -40)
-			    playerPosX = window.getSize().x - tuxTexture.getSize().x;
-            
             playerSprite.setPosition(playerPosX, playerPosY);
             textScore.setPosition(20, 20);
             textScore.setString(std::to_string(score));
@@ -98,7 +110,7 @@ int main()
             }
 
         }
-           
+
         // Desenha os frames
         window.clear();
         window.draw(backgroundSprite);
@@ -119,7 +131,15 @@ int main()
         if(!gameOver) {
             window.draw(playerSprite);
             window.draw(textScore);
+
+            // Definindo plataformas
+            for (size_t i = 0; i < 10; i++)
+		    {
+			    platformSprite.setPosition(platformPosition[i].x, platformPosition[i].y);
+			    window.draw(platformSprite);
+		    }
         }
+        
         if(gameOver) {
             window.draw(gameOverSprite);
         }
