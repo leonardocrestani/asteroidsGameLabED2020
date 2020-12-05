@@ -107,10 +107,10 @@ int main()
         // Gameplay
         if(!gameOver) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                playerPosX -= 3;
+                playerPosX -= 5;
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                playerPosX += 3;
+                playerPosX += 5;
             }
             
             playerSprite.setPosition(playerPosX, playerPosY);
@@ -132,7 +132,7 @@ int main()
                 {
                     playerPosY = height;
                     platformPosition[i].y -= dy; 
-                    if (platformPosition[i].y > 750)
+                    if (platformPosition[i].y > 700)
                     {
                         platformPosition[i].y = 0;
                         platformPosition[i].x = x(e);
