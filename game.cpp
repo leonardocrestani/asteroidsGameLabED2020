@@ -126,6 +126,21 @@ int main()
                 playerPosX = 680;
             }
 
+            // Adicionar nova plataforma conforme jogador sobe
+            if (playerPosY < height) {
+			for (size_t i = 0; i<7; i++)
+                {
+                    playerPosY = height;
+                    platformPosition[i].y -= dy; 
+                    if (platformPosition[i].y > 750)
+                    {
+                        platformPosition[i].y = 0;
+                        platformPosition[i].x = x(e);
+                    }
+                        
+                }
+            }
+            
             // Pulo do jogador na plataforma
             for (size_t i = 0; i<7; i++)
             {
@@ -138,6 +153,15 @@ int main()
                 }
                     
             }
+
+            // Adicionando score ao jogador
+            if (playerPosY == height && dy < (-1.62)) {
+                score++;
+                textScore.setPosition(20, 20);
+                textScore.setString(std::to_string(score));
+            }
+            dy += 0.2;
+            playerPosY += dy;
 
             // Se o jogador cair até o final da tela será game over
             if(playerPosY > 840) {
