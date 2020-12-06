@@ -1,6 +1,28 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <random>
 #include <string>
+#include <stdlib.h>
+#include <fstream>
+#include <cstdlib>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+    struct info {
+        int scores;
+        string nicknames;
+    };
+
+    info ranking;
+
+     bool cmp(const info &a, const info &b) {
+            return a.scores > b.scores || (a.scores == b.scores && a.nicknames < b.nicknames);
+    }
+
+    string salvarNick;
+    int salvarScore;
 
 
 int main()
@@ -51,6 +73,31 @@ int main()
     textName.setOutlineColor(sf::Color::Black);
     textName.setFillColor(sf::Color::White);
 
+    sf::String playerInput;
+    sf::Text playerText;
+    playerText.setFont(font);
+    playerText.setCharacterSize(42);
+    playerText.setOutlineColor(sf::Color::Black);
+    playerText.setFillColor(sf::Color::White);
+
+    //Vetor para salvar os dados da estrutura
+    vector<info>rankingFinal;
+
+    //Ler partidas anteriores
+    ifstream entrada;
+    entrada.open("ranking.txt");
+
+    if (entrada) {
+        while (entrada >> ranking.nicknames) {
+            entrada >> ranking.scores;
+            rankingFinal.push_back(ranking);
+        }
+        entrada.close();  
+    }
+    rankingFinal.push_back(ranking);
+    salvarNick = ranking.nicknames;
+    salvarScore = ranking.scores;
+
 
     // Iniciando plataformas
     sf::Vector2u platformPosition[7];
@@ -65,9 +112,11 @@ int main()
 
     // Iniciando variaveis
     bool writeNickname = true;
-    bool gameOver = false;
+    bool gameOver = true;
+    bool telaGameOver = true;
     int score = 0;
     int height = 160;
+    string nickname;
     float dy = 0;
     float playerPosX = 300, playerPosY = 150;
     
@@ -85,6 +134,12 @@ int main()
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            else if (event.type == sf::Event::TextEntered) {
+                playerInput.replace(sf::String(" "), sf::String(""));
+                playerInput += event.text.unicode;
+                playerText.setString(playerInput);
+                nickname = playerText.getString();
+            }
             else if (event.type == sf::Event::KeyPressed) {
                 if(event.key.code == sf::Keyboard::Escape) {
                     window.close();
@@ -98,14 +153,32 @@ int main()
                     height = 160;
                     dy = 0;
                     textScore.setString("0");
+                    telaGameOver = false;
                 }
         }
 
         // Atualizacao dos estados do jogo (elementos)
         // escrever nickname pegar ele e salvar
+
+        if(writeNickname && gameOver) {
+            playerText.setPosition(240, 420);
+            if (event.key.code == sf::Keyboard::Enter) {
+                writeNickname = false;
+                gameOver = true;
+                telaGameOver = false;
+            }
+        }
+
+        if(gameOver && !writeNickname) {
+            ranking.nicknames = nickname;
+            playerInput.clear();
+            if (event.key.code == sf::Keyboard::Space) {    
+                gameOver = false;
+            }
+        }
         
         // Gameplay
-        if(!gameOver) {
+        if(!gameOver && !writeNickname) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
                 playerPosX -= 5;
             }
@@ -163,9 +236,23 @@ int main()
             dy += 0.2;
             playerPosY += dy;
 
+
             // Se o jogador cair até o final da tela será game over
             if(playerPosY > 840) {
+                if (salvarScore < score) {
+                    ranking.scores = score;
+                    rankingFinal.pop_back();
+                    rankingFinal.push_back(ranking);
+                }
+                sort(rankingFinal.begin(), rankingFinal.end(), cmp);
+                ofstream saida;
+                saida.open("ranking.txt");
+                for (auto i : rankingFinal){
+                    saida << i.nicknames << " " << i.scores << endl;
+                }
+                saida.close();
                 gameOver = true;
+                telaGameOver = true;
             }
 
         }
@@ -174,20 +261,8 @@ int main()
         window.clear();
         window.draw(backgroundSprite);
 
-
-        /* INSERIR TELA DE NICKNAME
-         if(writeNickname) {
-            window.draw(nameSprite);
-            // quando escrever o nickname atualizar para true
-        } */
-
-        // Mostrar menu
-        /*if(gameOver && !writeNickname) {
-            window.draw(menuSprite);
-        }*/
-
         // Comecar jogo
-        if(!gameOver) {
+        if(!gameOver && !writeNickname) {
             // Desenhando as plataformas
             for (size_t i = 0; i<7; i++)
 		    {
@@ -198,10 +273,24 @@ int main()
             window.draw(textScore);
             //window.draw(textName);
         }
+
         // Tela de gameover
-        if(gameOver) {
+        if(telaGameOver && gameOver && playerPosY > 840) {
             window.draw(gameOverSprite);
         }
+
+        // Mostrar menu
+        if(!telaGameOver && gameOver && !writeNickname) {
+            window.draw(menuSprite);
+        }
+
+        ///INSERIR TELA DE NICKNAME
+        if(writeNickname) {
+            window.draw(nameSprite);
+            // quando escrever o nickname atualizar para true
+            window.draw(playerText);
+        }
+
         window.display();
     }
     
