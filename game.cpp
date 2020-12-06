@@ -7,22 +7,22 @@
 #include <cstdlib>
 #include <algorithm>
 #include <vector>
-
 using namespace std;
 
-    struct info {
-        int scores;
-        string nicknames;
-    };
+    // Gravas pontuações
+        // Estrutura
+        struct info {
+            int scores;
+            string nicknames;
+        };
+        info ranking;
 
-    info ranking;
-
-     bool cmp(const info &a, const info &b) {
+        bool cmp(const info &a, const info &b) {
             return a.scores > b.scores || (a.scores == b.scores && a.nicknames < b.nicknames);
-    }
+        }
 
-    string salvarNick;
-    int salvarScore;
+        string salvarNick;
+        int salvarScore;
 
 
 int main()
@@ -34,27 +34,27 @@ int main()
     window.setFramerateLimit(60);
 
     // Carregamento das texturas
-    sf::Texture backgroundTexture;
+    sf::Texture backgroundTexture; // Textura do background
     backgroundTexture.loadFromFile("./assets/backgroundGame.png");
     sf::Sprite backgroundSprite(backgroundTexture);
 
-    sf::Texture nameScreenTexture;
+    sf::Texture nameScreenTexture; // Textura do Nickname
     nameScreenTexture.loadFromFile("./assets/nameScreen.png");
     sf::Sprite nameSprite(nameScreenTexture);
 
-    sf::Texture menuTexture;
+    sf::Texture menuTexture; // Textura do Menu
     menuTexture.loadFromFile("./assets/menuGame.png");
     sf::Sprite menuSprite(menuTexture);
 
-    sf::Texture gameOverTexture;
+    sf::Texture gameOverTexture; // Textura do GameOver
     gameOverTexture.loadFromFile("./assets/gameoverScreen.png");
     sf::Sprite gameOverSprite(gameOverTexture);
 
-    sf::Texture platformTexture;
+    sf::Texture platformTexture; // Textura das plataformas 
     platformTexture.loadFromFile("./assets/plataformaGame.png");
     sf::Sprite platformSprite(platformTexture);
 
-    sf::Texture tuxTexture;
+    sf::Texture tuxTexture; // Textura do Tux
     tuxTexture.loadFromFile("./assets/tuxGame.png");
     sf::Sprite playerSprite(tuxTexture);
 
@@ -80,24 +80,23 @@ int main()
     playerText.setOutlineColor(sf::Color::Black);
     playerText.setFillColor(sf::Color::White);
 
-    //Vetor para salvar os dados da estrutura
-    vector<info>rankingFinal;
+            //Vetor para salvar os dados da estrutura
+            vector<info>rankingFinal;
 
-    //Ler partidas anteriores
-    ifstream entrada;
-    entrada.open("ranking.txt");
+        //Partidas anteriores
+        ifstream entrada;
+        entrada.open("ranking.txt");
 
-    if (entrada) {
-        while (entrada >> ranking.nicknames) {
-            entrada >> ranking.scores;
-            rankingFinal.push_back(ranking);
-        }
-        entrada.close();  
-    }
-    rankingFinal.push_back(ranking);
-    salvarNick = ranking.nicknames;
-    salvarScore = ranking.scores;
-
+        if (entrada) {
+            while (entrada >> ranking.nicknames) {
+                entrada >> ranking.scores;
+                rankingFinal.push_back(ranking);
+            }
+            entrada.close();  
+        }   
+        rankingFinal.push_back(ranking);
+        salvarNick = ranking.nicknames;
+        salvarScore = ranking.scores;
 
     // Iniciando plataformas
     sf::Vector2u platformPosition[7];
@@ -159,7 +158,6 @@ int main()
 
         // Atualizacao dos estados do jogo (elementos)
         // escrever nickname pegar ele e salvar
-
         if(writeNickname && gameOver) {
             playerText.setPosition(240, 420);
             if (event.key.code == sf::Keyboard::Enter) {
@@ -244,15 +242,18 @@ int main()
                     rankingFinal.pop_back();
                     rankingFinal.push_back(ranking);
                 }
+
+                // Salvar em um arquivo txt
                 sort(rankingFinal.begin(), rankingFinal.end(), cmp);
-                ofstream saida;
-                saida.open("ranking.txt");
-                for (auto i : rankingFinal){
-                    saida << i.nicknames << " " << i.scores << endl;
-                }
-                saida.close();
-                gameOver = true;
-                telaGameOver = true;
+                    // Nova pontuação
+                    ofstream saida;
+                    saida.open("ranking.txt");
+                    for (auto i : rankingFinal){
+                        saida << i.nicknames << " " << i.scores << endl;
+                    }
+                    saida.close();
+                    gameOver = true;
+                    telaGameOver = true;
             }
 
         }
@@ -271,7 +272,7 @@ int main()
 		    }
             window.draw(playerSprite);
             window.draw(textScore);
-            //window.draw(textName);
+            // window.draw(textName);
         }
 
         // Tela de gameover
