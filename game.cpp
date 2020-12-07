@@ -25,8 +25,7 @@ using namespace std;
         int salvarScore;
 
 
-int main()
-{   
+int main() {   
     // Iniciando tela
     const int windowWidth = 600, windowHeight = 900;
 
@@ -80,8 +79,8 @@ int main()
     playerText.setOutlineColor(sf::Color::Black);
     playerText.setFillColor(sf::Color::White);
 
-            //Vetor para salvar os dados da estrutura
-            vector<info>rankingFinal;
+    //Vetor para salvar os dados da estrutura
+    vector<info>rankingFinal;
 
         //Partidas anteriores
         ifstream entrada;
@@ -99,11 +98,11 @@ int main()
         salvarScore = ranking.scores;
 
     // Iniciando plataformas
-    sf::Vector2u platformPosition[7];
+    sf::Vector2u platformPosition[6];
 	std::uniform_int_distribution<unsigned> x(0, 600 - platformTexture.getSize().x);
 	std::uniform_int_distribution<unsigned> y(100, 900);
 	std::default_random_engine e(time(0));
-    for(size_t i = 0; i<7; i++)
+    for(size_t i = 0; i<6; i++)
 	{
 		platformPosition[i].y = y(e);
         platformPosition[i].x = x(e);
@@ -118,6 +117,7 @@ int main()
     string nickname;
     float dy = 0;
     float playerPosX = 300, playerPosY = 150;
+    bool aberto = false;
     
     const int esquerdaPlayer = 40;
 	const int direitaPlayer = 40;
@@ -134,33 +134,25 @@ int main()
                 window.close();
             }
             else if (event.type == sf::Event::TextEntered) {
-                playerInput.replace(sf::String(" "), sf::String(""));
-                playerInput += event.text.unicode;
-                playerText.setString(playerInput);
-                nickname = playerText.getString();
+                    if (playerInput.getSize() < 10) {
+                        playerInput.replace(sf::String(" "), sf::String(""));
+                        playerInput.replace(sf::String(""), sf::String(""));
+                        playerInput +=event.text.unicode;
+                        playerText.setString(playerInput);
+                        nickname = playerText.getString();
+                    }
             }
             else if (event.type == sf::Event::KeyPressed) {
                 if(event.key.code == sf::Keyboard::Escape) {
                     window.close();
                 }
             }
-            else if (event.key.code == sf::Keyboard::F2){
-                    gameOver = false;
-                    playerPosX = 300;
-                    playerPosY = 150;
-                    score = 0;
-                    height = 160;
-                    dy = 0;
-                    textScore.setString("0");
-                    telaGameOver = false;
-                }
+            // sem restart
         }
 
-        // Atualizacao dos estados do jogo (elementos)
-        // escrever nickname pegar ele e salvar
         if(writeNickname && gameOver) {
             playerText.setPosition(240, 420);
-            if (event.key.code == sf::Keyboard::Enter) {
+            if (event.key.code == sf::Keyboard::F1) {
                 writeNickname = false;
                 gameOver = true;
                 telaGameOver = false;
@@ -168,8 +160,6 @@ int main()
         }
 
         if(gameOver && !writeNickname) {
-            ranking.nicknames = nickname;
-            playerInput.clear();
             if (event.key.code == sf::Keyboard::Space) {    
                 gameOver = false;
             }
@@ -185,9 +175,35 @@ int main()
             }
             
             playerSprite.setPosition(playerPosX, playerPosY);
-            /* ESCREVER NOME DO JOGADOR
-            textName.setPosition(350, 20);
-            textName.setString();*/
+            
+            if (!aberto) {
+                aberto = true;
+                ifstream entrada;
+                entrada.open("ranking.txt");
+
+                if (entrada) {
+                    while (entrada >> ranking.nicknames) {
+                        entrada >> ranking.scores;
+                        entrada.ignore();
+                        if (ranking.scores > 0) {
+                        rankingFinal.push_back(ranking);
+                        }
+                    }
+                    entrada.close();
+
+                    salvarNick = ranking.nicknames;
+                    salvarScore = ranking.scores;
+                    ofstream saida;
+                    saida.open("ranking.txt");
+                        for (auto i : rankingFinal){
+                            saida << i.nicknames << " " << i.scores << endl;
+                        }
+                        saida.close();
+                    }
+                }
+
+                ranking.nicknames = nickname;
+                playerInput.clear();
             
             // Jogador quando sai pelo lado volta do outro
             if (playerPosX > 680) {
@@ -199,7 +215,7 @@ int main()
 
             // Adicionar nova plataforma conforme jogador sobe
             if (playerPosY < height) {
-			for (size_t i = 0; i<7; i++)
+			for (size_t i = 0; i<6; i++)
                 {
                     playerPosY = height;
                     platformPosition[i].y -= dy; 
@@ -213,7 +229,7 @@ int main()
             }
             
             // Pulo do jogador na plataforma
-            for (size_t i = 0; i<7; i++)
+            for (size_t i = 0; i<6; i++)
             {
                 if ((playerPosX + direitaPlayer > platformPosition[i].x)
                     && (playerPosX + esquerdaPlayer < platformPosition[i].x + platformTexture.getSize().x)
@@ -243,19 +259,44 @@ int main()
                     rankingFinal.push_back(ranking);
                 }
 
-                // Salvar em um arquivo txt
-                sort(rankingFinal.begin(), rankingFinal.end(), cmp);
-                    // Nova pontuação
+                if (salvarScore < score) {
+                    ranking.scores = score;
+                    rankingFinal.pop_back();
+                    rankingFinal.push_back(ranking);
+                    sort(rankingFinal.begin(), rankingFinal.end(), cmp);
                     ofstream saida;
                     saida.open("ranking.txt");
-                    for (auto i : rankingFinal){
-                        saida << i.nicknames << " " << i.scores << endl;
-                    }
-                    saida.close();
-                    gameOver = true;
-                    telaGameOver = true;
-            }
+                        for (auto i : rankingFinal){
+                            saida << i.nicknames << " " << i.scores << endl;
+                        }
+                        saida.close();
 
+                        ifstream entrada;
+                        entrada.open("ranking.txt");
+
+                        if (entrada) {
+                            rankingFinal.clear();
+                            while (entrada >> ranking.nicknames) {
+                            entrada >> ranking.scores;
+                            entrada.ignore();
+                                if (ranking.scores > 0) {
+                                    rankingFinal.push_back(ranking);
+                                 }
+                            }
+                            entrada.close();
+
+                            ofstream saidaf;
+                            saidaf.open("ranking.txt");
+                                for (auto i : rankingFinal){
+                                    saidaf << i.nicknames << " " << i.scores  << endl;
+                                }
+                            saidaf.close();
+                        }
+                    
+                }
+                gameOver = true;
+                telaGameOver = true;
+            }
         }
 
         // Desenha os frames
@@ -265,7 +306,7 @@ int main()
         // Comecar jogo
         if(!gameOver && !writeNickname) {
             // Desenhando as plataformas
-            for (size_t i = 0; i<7; i++)
+            for (size_t i = 0; i<6; i++)
 		    {
 			    platformSprite.setPosition(platformPosition[i].x, platformPosition[i].y);
 			    window.draw(platformSprite);
