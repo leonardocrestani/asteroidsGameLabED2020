@@ -9,20 +9,20 @@
 #include <vector>
 using namespace std;
 
-    // Gravar pontuações
-        // Estrutura
-        struct info {
-            int scores;
-            string nicknames;
-        };
-        info ranking;
+// Estrutura para ranking
+struct info {
+    int scores;
+    string nicknames;
+};
+    info ranking;
 
-        bool cmp(const info &a, const info &b) {
-            return a.scores > b.scores || (a.scores == b.scores && a.nicknames < b.nicknames);
-        }
+// ALgoritmo para ordenar o ranking
+bool cmp(const info &a, const info &b) {
+    return a.scores > b.scores || (a.scores == b.scores && a.nicknames < b.nicknames);
+}
 
-        string salvarNick;
-        int salvarScore;
+string salvarNick;
+int salvarScore;
 
 
 int main() {   
@@ -57,15 +57,15 @@ int main() {
     tuxTexture.loadFromFile("./assets/tuxGame.png");
     sf::Sprite playerSprite(tuxTexture);
 
-    // Textos
+    // Criação dos textos
     sf::Font font;
-    font.loadFromFile("assets/small_font.ttf");
+    font.loadFromFile("assets/small_font.ttf"); // Carregar fonte
 
     sf::Text textScore;
-    textScore.setFont(font); //cor
-    textScore.setCharacterSize(42); //tamanho fonte
+    textScore.setFont(font); 
+    textScore.setCharacterSize(42); 
     textScore.setOutlineColor(sf::Color::Black);
-    textScore.setFillColor(sf::Color::White); //definindo a cor
+    textScore.setFillColor(sf::Color::White);
 
     sf::Text textName;
     textName.setFont(font);
@@ -80,7 +80,7 @@ int main() {
     playerText.setOutlineColor(sf::Color::Black);
     playerText.setFillColor(sf::Color::White);
 
-    //Salvar dados da estrutura
+    // Criação do vetor para o ranking
     vector<info>rankingFinal;
 
         //Partidas anteriores
@@ -120,6 +120,7 @@ int main() {
     float playerPosX = 300, playerPosY = 150;
     bool aberto = false;
     
+    // Caixa saltitante do jogador
     const int esquerdaPlayer = 40;
 	const int direitaPlayer = 40;
 	const int baixoPlayer = 80;
@@ -134,6 +135,7 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            // Escrever o texto
             else if (event.type == sf::Event::TextEntered) {
                     if (playerInput.getSize() < 10) {
                         playerInput.replace(sf::String(" "), sf::String(""));
@@ -143,6 +145,7 @@ int main() {
                         nickname = playerText.getString();
                     }
             }
+            // Fechar janela
             else if (event.type == sf::Event::KeyPressed) {
                 if(event.key.code == sf::Keyboard::Escape) {
                     window.close();
@@ -151,7 +154,7 @@ int main() {
             // sem restart
         }
 
-        // Nickname
+        // Enquanto estiver na tela de Nickname
         if(writeNickname && gameOver) {
             playerText.setPosition(240, 420);
             if (event.key.code == sf::Keyboard::F1) {
@@ -160,14 +163,14 @@ int main() {
                 telaGameOver = false;
             }
         }
-
+        // Enquanto estiver na tela do Menu
         if(gameOver && !writeNickname) {
             if (event.key.code == sf::Keyboard::Space) {    
                 gameOver = false;
             }
         }
         
-        // Gameplay
+        // Gameplay - Jogo em funcionamento
         if(!gameOver && !writeNickname) {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
                 playerPosX -= 5;
@@ -178,6 +181,7 @@ int main() {
             
             playerSprite.setPosition(playerPosX, playerPosY);
             
+            // Ver se o arquivo de ranking está aberto
             if (!aberto) {
                 aberto = true;
                 ifstream entrada;
@@ -192,8 +196,8 @@ int main() {
                         }
                     }
                     entrada.close();
-
-                    // Gravar Nickname
+                    
+                    // Salvar nick e score nas variaveis do ranking
                     salvarNick = ranking.nicknames;
                     salvarScore = ranking.scores;
                     ofstream saida;
@@ -222,7 +226,7 @@ int main() {
                 {
                     playerPosY = height;
                     platformPosition[i].y -= dy; 
-                    if (platformPosition[i].y > 700)
+                    if (platformPosition[i].y > 700)    // Definir nova plataforma no topo
                     {
                         platformPosition[i].y = 0;
                         platformPosition[i].x = x(e);
@@ -238,7 +242,7 @@ int main() {
                     && (playerPosX + esquerdaPlayer < platformPosition[i].x + platformTexture.getSize().x)
                     && (playerPosY + baixoPlayer > platformPosition[i].y)
                     && (playerPosY + baixoPlayer < platformPosition[i].y + platformTexture.getSize().y)
-                    && (dy > 0)) {
+                    && (dy > 0)) {  // Tux está caindo
                     dy = -12.5;
                 }
                     
@@ -261,8 +265,8 @@ int main() {
                     rankingFinal.pop_back();
                     rankingFinal.push_back(ranking);
                 }
-
-                // Salvar score
+ 
+                // Salvar score no ranking
                 if (salvarScore < score) {
                     ranking.scores = score;
                     rankingFinal.pop_back();
@@ -298,6 +302,7 @@ int main() {
                         }
                     
                 }
+                // Quando jogador morrer, abrir tela de gameOver
                 gameOver = true;
                 telaGameOver = true;
             }
@@ -317,7 +322,6 @@ int main() {
 		    }
             window.draw(playerSprite);
             window.draw(textScore);
-            // window.draw(textName);
         }
 
         // Tela de gameover
