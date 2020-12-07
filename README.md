@@ -5,7 +5,8 @@ Criação de um jogo utilizando SFML e funcionalidade aprendidas em aula sobre E
 <h3> Compilar </h3>
 <p> g++ -c game.cpp </p>
 <p> SFML g++ game.o -o game -lsfml-graphics -lsfml-window -lsfml-system </p>
-<h3> Apos </h3>
+<h3> Após </h3>
 <p> Para abrir o jogo basta digitar ./game </p>
 <p> Digitar seu nickname para iniciar </p>
-<p> Menu clicar espaco e ser feliz no jogo </p>
+<p> No menu, clicar espaço e ser feliz no jogo </p>
+<p> Tela que exibe o ranking com algumas falhas </p>

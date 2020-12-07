@@ -9,7 +9,7 @@
 #include <vector>
 using namespace std;
 
-    // Gravas pontuações
+    // Gravar pontuações
         // Estrutura
         struct info {
             int scores;
@@ -57,14 +57,15 @@ int main() {
     tuxTexture.loadFromFile("./assets/tuxGame.png");
     sf::Sprite playerSprite(tuxTexture);
 
+    // Textos
     sf::Font font;
     font.loadFromFile("assets/small_font.ttf");
 
     sf::Text textScore;
-    textScore.setFont(font);
-    textScore.setCharacterSize(42);
+    textScore.setFont(font); //cor
+    textScore.setCharacterSize(42); //tamanho fonte
     textScore.setOutlineColor(sf::Color::Black);
-    textScore.setFillColor(sf::Color::White);
+    textScore.setFillColor(sf::Color::White); //definindo a cor
 
     sf::Text textName;
     textName.setFont(font);
@@ -79,7 +80,7 @@ int main() {
     playerText.setOutlineColor(sf::Color::Black);
     playerText.setFillColor(sf::Color::White);
 
-    //Vetor para salvar os dados da estrutura
+    //Salvar dados da estrutura
     vector<info>rankingFinal;
 
         //Partidas anteriores
@@ -150,6 +151,7 @@ int main() {
             // sem restart
         }
 
+        // Nickname
         if(writeNickname && gameOver) {
             playerText.setPosition(240, 420);
             if (event.key.code == sf::Keyboard::F1) {
@@ -191,6 +193,7 @@ int main() {
                     }
                     entrada.close();
 
+                    // Gravar Nickname
                     salvarNick = ranking.nicknames;
                     salvarScore = ranking.scores;
                     ofstream saida;
@@ -259,13 +262,14 @@ int main() {
                     rankingFinal.push_back(ranking);
                 }
 
+                // Salvar score
                 if (salvarScore < score) {
                     ranking.scores = score;
                     rankingFinal.pop_back();
                     rankingFinal.push_back(ranking);
                     sort(rankingFinal.begin(), rankingFinal.end(), cmp);
                     ofstream saida;
-                    saida.open("ranking.txt");
+                    saida.open("ranking.txt"); 
                         for (auto i : rankingFinal){
                             saida << i.nicknames << " " << i.scores << endl;
                         }
